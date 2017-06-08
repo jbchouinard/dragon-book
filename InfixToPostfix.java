@@ -69,7 +69,7 @@ class InfixToPostfixTranslator implements Parser {
     }
 }
 
-class PostfixToInfix {
+class InfixToPostfix {
     public static void main(String[] args) throws IOException, SyntaxError {
         OutputStream buffer = new ByteArrayOutputStream();
         Parser translator = new InfixToPostfixTranslator(System.in, buffer);
