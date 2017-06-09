@@ -6,6 +6,6 @@ class Word extends Token {
         super(t); lexeme = new String(lx);
     }
     public String toString() {
-        return String.format("<%s, \"%s\">", Tag.toString(tag), lexeme);
+        return String.format("<%s, \"%s\">", Tags.toString(tag), lexeme);
     }
 }

@@ -26,8 +26,8 @@ public class Lexer {
     public Lexer(InputStream in) throws IOException {
         input = in;
         peekAhead = (char) in.read();
-        reserve(new Word(Tag.TRUE, "true"));
-        reserve(new Word(Tag.FALSE, "false"));
+        reserve(new Word(Tags.TRUE, "true"));
+        reserve(new Word(Tags.FALSE, "false"));
     }
     public Token scan() throws IOException {
         // Skip whitespace and comments
@@ -42,38 +42,52 @@ public class Lexer {
             }
             read();
         }
-        // Parse comparison operators
-        if (peek == '<') {
-            if (peekAhead == '=') {
-                read(); read();
-                return new Token(Tag.LTEQ);
-            } else {
+        // Read operators
+        switch (peek) {
+            case '<':
+                if (peekAhead == '=') {
+                    read(); read();
+                    return new Op(OpTags.LTEQ);
+                } else {
+                    read();
+                    return new Op(OpTags.LT);
+                }
+            case '>':
+                if (peekAhead == '=') {
+                    read(); read();
+                    return new Op(OpTags.GTEQ);
+                } else {
+                    read();
+                    return new Op(OpTags.GT);
+                }
+            case '=':
+                if (peekAhead == '=') {
+                    read(); read();
+                    return new Op(OpTags.EQ);
+                }
+                else {
+                    read();
+                    return new Token(Tags.ASSIGN);
+                }
+            case '!':
+                if (peekAhead == '=') {
+                    read(); read();
+                    return new Op(OpTags.NEQ);
+                } else break;
+            case '+':
                 read();
-                return new Token(Tag.LT);
-            }
-        }
-        if (peek == '>') {
-            if (peekAhead == '=') {
-                read(); read();
-                return new Token(Tag.GTEQ);
-            } else {
+                return new Op(OpTags.ADD);
+            case '-':
                 read();
-                return new Token(Tag.GT);
-            }
+                return new Op(OpTags.SUB);
+            case '*':
+                read();
+                return new Op(OpTags.MUL);
+            case '/':
+                read();
+                return new Op(OpTags.DIV);
         }
-        if (peek == '=') {
-            if (peekAhead == '=') {
-                read(); read();
-                return new Token(Tag.EQ);
-            }
-        }
-        if (peek == '!') {
-            if (peekAhead == '=') {
-                read(); read();
-                return new Token(Tag.NEQ);
-            }
-        }
-        // Parse numbers
+        // Read numbers
         if (Character.isDigit(peek) || peek == '.') {
             StringBuffer buffer = new StringBuffer();
             do {
@@ -81,7 +95,7 @@ public class Lexer {
             } while (Character.isDigit(read()) || peek == '.');
             return new Num(Double.parseDouble(buffer.toString()));
         }
-        // Parse identifiers and keywords
+        // Read identifiers and keywords
         if (Character.isLetter(peek)) {
             StringBuffer buffer = new StringBuffer();
             do {
@@ -90,11 +104,12 @@ public class Lexer {
             String lexeme = buffer.toString();
             Token token = words.get(lexeme);
             if ((token = words.get(lexeme)) == null) {
-                token = new Word(Tag.ID, lexeme);
+                token = new Word(Tags.ID, lexeme);
                 words.put(lexeme, token);
             }
             return token;
         }
+        // Check if reached end of input
         if (stop) return new Token(Tag.STOP);
         // Else return generic character token
         Token t = new Token(peek);
