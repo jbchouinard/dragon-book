@@ -9,6 +9,10 @@ public class Tags {
         FALSE = 259,
         OP = 260,
         ASSIGN = 261,
+        WHILE = 262,
+        FOR = 263,
+        DO = 264,
+        IF = 265,
         STOP = (int) Character.MAX_VALUE;
     public static String toString(int tag) {
         if (tag > 0 && tag < 256) {
@@ -22,6 +26,10 @@ public class Tags {
             case STOP: return "STOP";
             case OP: return "OP";
             case ASSIGN: return "ASSIGN";
+            case WHILE: return "WHILE";
+            case FOR: return "FOR";
+            case DO: return "DO";
+            case IF: return "IF";
             default: return "INVALID";
         }
     }

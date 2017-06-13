@@ -28,6 +28,10 @@ public class Lexer {
         peekAhead = (char) in.read();
         reserve(new Word(Tags.TRUE, "true"));
         reserve(new Word(Tags.FALSE, "false"));
+        reserve(new Word(Tags.WHILE, "while"));
+        reserve(new Word(Tags.FOR, "for"));
+        reserve(new Word(Tags.DO, "do"));
+        reserve (new Word(Tags.IF, "if"));
     }
     public Token scan() throws IOException {
         // Skip whitespace and comments
@@ -86,6 +90,18 @@ public class Lexer {
             case '/':
                 read();
                 return new Op(OpTags.DIV);
+            case '&':
+                if (peekAhead == '&') {
+                    read(); read();
+                    return new Op(OpTags.AND);
+                } else break;
+            case '|':
+                if (peekAhead == '|') {
+                    read(); read();
+                    return new Op(OpTags.OR);
+                } else break;
+            default:
+                break;
         }
         // Read numbers
         if (Character.isDigit(peek) || peek == '.') {

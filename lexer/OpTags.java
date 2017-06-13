@@ -10,7 +10,9 @@ public class OpTags {
         ADD = 7,
         SUB = 8,
         MUL = 9,
-        DIV = 10;
+        DIV = 10,
+        AND = 11,
+        OR = 12;
     public static String toString(int op) {
         switch (op) {
             case EQ: return "==";
@@ -23,6 +25,8 @@ public class OpTags {
             case SUB: return "-";
             case MUL: return "*";
             case DIV: return "/";
+            case AND: return "&&";
+            case OR: return "||";
             default: return "INVALID";
         }
     }
