@@ -1,18 +1,18 @@
 package lexer;
 import java.util.*;
 import java.io.*;
-public class Tag {
+public class Tags {
     public static final int
         NUM = 256,
         ID = 257,
         TRUE = 258,
         FALSE = 259,
-        EQ = 260,
-        NEQ = 261,
-        LT = 262,
-        LTEQ = 263,
-        GT = 264,
-        GTEQ = 265,
+        OP = 260,
+        ASSIGN = 261,
+        WHILE = 262,
+        FOR = 263,
+        DO = 264,
+        IF = 265,
         STOP = (int) Character.MAX_VALUE;
     public static String toString(int tag) {
         if (tag > 0 && tag < 256) {
@@ -24,12 +24,12 @@ public class Tag {
             case TRUE: return "TRUE";
             case FALSE: return "FALSE";
             case STOP: return "STOP";
-            case EQ: return "EQ";
-            case NEQ: return "NEQ";
-            case LT: return "LT";
-            case LTEQ: return "LTEQ";
-            case GT: return "GT";
-            case GTEQ: return "GTEQ";
+            case OP: return "OP";
+            case ASSIGN: return "ASSIGN";
+            case WHILE: return "WHILE";
+            case FOR: return "FOR";
+            case DO: return "DO";
+            case IF: return "IF";
             default: return "INVALID";
         }
     }
