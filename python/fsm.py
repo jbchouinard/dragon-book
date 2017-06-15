@@ -1,14 +1,25 @@
+from typing import AnyStr, List, Union
+
+from aho_corasick import TaggedTrie, compute_failure_function
+
+
 class DFSM:
-    "Deterministic Finite State Machine"
+    """Deterministic Finite State Machine"""
+
     def __init__(self, states=None, symbols=None, start=None, accepting=None):
         self._transitions = {}
-        self.start = start
-        self.accepting = accepting
-        self.state = start
-        self.symbols = symbols
+        self.start = self.state = start
+        self.accepting = accepting if accepting is not None else []
+        self.symbols = symbols if symbols is not None else []
         if states is not None:
             for state in states:
                 self._transitions[state] = {s: None for s in symbols}
+
+    def add_state(self, state):
+        self._transitions[state] = {}
+
+    def add_symbol(self, symbol):
+        self.symbols.append(symbol)
 
     def add_transition(self, orig, symbol, dest):
         self._transitions[orig][symbol] = dest
@@ -29,23 +40,35 @@ class DFSM:
     def is_accepting(self):
         return self.state in self.accepting
 
-    def feed(self, input):
-        for symbol in input:
-            self.state = self._transitions[self.state][symbol]
+    def feed(self, input_):
+        for s in input_:
+            t = self._transitions[self.state]
+            if s in t:
+                pass
+            else:
+                raise KeyError(
+                    "there is no transition for symbol "
+                    f"'{s}' from state '{self.state}'"
+                )
+
+    def reset(self):
+        self.state = self.start
 
 
 class NFSM(DFSM):
-    "Nondeterministic Finite State Machine"
+    """Nondeterministic Finite State Machine"""
+
     def __init__(self, states, symbols, start, accepting):
         super().__init__(states, symbols, start, accepting)
         self.state = self.closure([start])
 
-    def closure(self, T):
-        "States reachable by following epsilon (empty string) edges from T"
+    def closure(self, t):
+        """States reachable by following epsilon (empty string) edges from t"""
         raise NotImplementedError
 
-    def move(self, T, s):
-        "States reachable by following edges for symbol s from set of states T"
+    def move(self, t, s):
+        """States reachable by following edges for symbol s from set of
+        states t """
         raise NotImplementedError
 
     def feed(self, symbols):
@@ -57,7 +80,7 @@ class NFSM(DFSM):
         return len(set(self.accepting) & set(self.state)) > 0
 
 
-def make_dfsm_from_table(table):
+def make_dfsm_from_table(table: AnyStr) -> DFSM:
     """
     Create deterministic finite state machine from a string representation
     of its transition table, like:
@@ -108,6 +131,36 @@ def make_dfsm_from_table(table):
     return dfsm
 
 
+def make_kmp_dfsm(word: Union[AnyStr, List[AnyStr]]) -> DFSM:
+    """Make a dfsm that accepts strings in .*word, based on KMP algorithm."""
+
+    # Todo: compute failure function directly from FSM instead of having
+    #       to construct two different data structures
+    def b(s):
+        return word[s]
+
+    def l(s):
+        return [b(s + 1), s + 1]
+
+    trie = TaggedTrie()
+    trie.create_root(0)
+    for s in range(1, len(word) + 1):
+        trie.create_node(s, word[0:s])
+    f = compute_failure_function(trie)
+    dfsm = DFSM()
+    dfsm.add_state(0)
+    for s in range(0, len(word)):
+        dfsm.add_state(s + 1)
+        dfsm.add_transition(s, b(s), s + 1)
+        t = s
+        while (t > 0):
+            t = f[t]
+            trans = [s] + l(t)
+            if trans[1] not in dfsm._transitions[s]:
+                dfsm.add_transition(*trans)
+    return dfsm
+
+
 if __name__ == '__main__':
     dfsm = DFSM([0, 1], 'ab', 0, [1])
     dfsm.add_transitions(0, ('a', 1), ('b', 0))
@@ -140,33 +193,3 @@ if __name__ == '__main__':
         [2]    {}       {}      {}      {}
         """
     )
-
-
-from aho_corasick import TaggedTrie, compute_failure_function
-
-def make_kmp_dfsm(word):
-    "Make a dfsm that accepts strings in .*word, based on KMP algorithm."
-    # Todo: compute failure function directly from FSM instead of having
-    # to construct two different data structures
-    def b(s):
-        return word[s]
-
-    def l(s):
-        return [b(s+1), s+1]
-
-    trie = TaggedTrie()
-    trie.create_root(0)
-    for s in range(1, len(word)+1):
-        trie.create_node(s, word[0:s])
-    f = compute_failure_function(trie)
-    dfsm = DFSM()
-    dfsm.add_state(0)
-    for s in range(0, len(word)):
-        dfsm.add_state(s+1)
-        dfsm.add_transition(s, b(s), s+1)
-        t = s
-        while (t > 0):
-            t = f[t]
-            trans = [s] + l(t)
-            if trans[1] not in dfsm.transitions[s]:
-                dfsm.add_transition(*trans)

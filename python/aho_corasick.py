@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from typing import Dict
 
 import attr
 
@@ -162,7 +163,7 @@ def b(nodes):
         return list(nodes.keys())
 
 
-def compute_suffix_links(root):
+def compute_suffix_links(root: TrieNode):
     """
     See wiki entry for Aho-Corasick algorithm for definition of suffix links
     with diagrams and everything.
@@ -190,7 +191,7 @@ def compute_suffix_links(root):
     return f
 
 
-def compute_failure_function(tagged_trie):
+def compute_failure_function(tagged_trie: TaggedTrie) -> Dict[int, int]:
     """
     Compute suffix links for a tagged trie. Returns an explicit mapping of
     suffix links by tag.
@@ -271,3 +272,5 @@ if __name__ == '__main__':
         assert False, "expected a scanner error"
     except ScannerError:
         pass
+
+
