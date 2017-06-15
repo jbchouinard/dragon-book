@@ -9,25 +9,24 @@ Currently it contains or is planned to contain the following projects:
 
 Python
 ------
- - Deterministic finite automata (mostly done)
- - Non-deterministic finite automata (in progress)
- - NFA-to-DFA converter (not started)
- - Regex parser (just started)
- - Regex-NFA compiler (not started)
- - Regex-DFA compiler (not started)
- - Implementations of KMP and Aho-Corasick algorithms (mostly done)
+- Deterministic finite automata (mostly done)
+- Non-deterministic finite automata (in progress)
+- NFA-to-DFA converter (not started)
+- Regex parser (just started)
+- Regex-NFA compiler (not started)
+- Regex-DFA compiler (not started)
+- Implementations of KMP and Aho-Corasick keyword string search algorithms (mostly done)
 
 Java
 ----
- - Lexer for a C-like language (in progress)
+- Lexer for a C-like language (in progress)
 
 C
 -
- - Lexer for a C-like language (just started)
- - `jblisp` compiler front-end (not started)
- - compiler back-end for `sixteen` architecture
+- Lexer for a C-like language (just started)
+- `jblisp` compiler front-end (not started)
 
 FLEX & BYACC
 ------------
- - Simple `FLEX` examples (done)
- - `jblisp` lexer and parser (not started)
+- Simple `FLEX` examples (done)
+- `jblisp` lexer and parser (not started)
